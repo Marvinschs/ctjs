@@ -218,3 +218,14 @@ fun getBranch(): String {
     }
     return stdout.toString().trim()
 }
+
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+
+        excludeDirs.add(file(".kotlin"))
+        excludeDirs.add(file("build"))
+        excludeDirs.add(file("run"))
+    }
+}
