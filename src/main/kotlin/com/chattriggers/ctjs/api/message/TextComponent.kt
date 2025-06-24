@@ -19,6 +19,7 @@ import net.minecraft.util.Formatting
 import org.mozilla.javascript.Context
 import org.mozilla.javascript.NativeObject
 import org.mozilla.javascript.ScriptRuntime
+import java.net.URI
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 import kotlin.streams.toList
@@ -193,7 +194,7 @@ class TextComponent private constructor(
                 Client.getMinecraft().networkHandler?.onGameMessage(GameMessageS2CPacket(this, false))
             }
         } else {
-            Player.toMC()?.sendMessage(this)
+            Player.toMC()?.sendMessage(this, false)
         }
     }
 
@@ -292,7 +293,7 @@ class TextComponent private constructor(
                     if (event.action != null) {
                         val clickEvent = NativeObject()
                         clickEvent.put("action", clickEvent, event.action.asString())
-                        clickEvent.put("value", clickEvent, event.value)
+                        clickEvent.put("value", clickEvent, getEventValue(event))
 
                         it.put("clickEvent", it, clickEvent)
                     }
@@ -301,9 +302,7 @@ class TextComponent private constructor(
                     if (event.action != null) {
                         val hoverEvent = NativeObject()
                         hoverEvent.put("action", hoverEvent, event.action.asString())
-                        event.getValue(event.action!!)?.let { value ->
-                            hoverEvent.put("value", hoverEvent, value)
-                        }
+                        hoverEvent.put("value", hoverEvent, getEventValue(event))
 
                         it.put("hoverEvent", it, hoverEvent)
                     }
@@ -499,9 +498,17 @@ class TextComponent private constructor(
                     it
                 }
                 else -> error("Expected \"value\" key to be a string")
-            }
+            }.orEmpty()
 
-            return ClickEvent(clickAction, clickValue.orEmpty())
+            return when (action) {
+                ClickEvent.Action.OPEN_URL -> ClickEvent.OpenUrl(URI(clickValue))
+                ClickEvent.Action.OPEN_FILE -> ClickEvent.OpenFile(clickValue)
+                ClickEvent.Action.RUN_COMMAND -> ClickEvent.RunCommand(clickValue)
+                ClickEvent.Action.SUGGEST_COMMAND -> ClickEvent.SuggestCommand(clickValue)
+                ClickEvent.Action.CHANGE_PAGE -> clickValue.toIntOrNull()?.let { ClickEvent.ChangePage(it) }
+                ClickEvent.Action.COPY_TO_CLIPBOARD -> ClickEvent.CopyToClipboard(clickValue)
+                else -> error("unreachable")
+            }
         }
 
         private fun makeHoverEvent(hoverEvent: Any?): HoverEvent? {
@@ -514,7 +521,7 @@ class TextComponent private constructor(
             val value = hoverEvent["value"]
 
             val hoverAction = when (action) {
-                is HoverEvent.Action<*> -> action
+                is HoverEvent.Action -> action
                 is CharSequence -> when (action.toString().uppercase()) {
                     "SHOW_TEXT" -> HoverEvent.Action.SHOW_TEXT
                     "SHOW_ITEM" -> HoverEvent.Action.SHOW_ITEM
@@ -528,35 +535,50 @@ class TextComponent private constructor(
             }
 
             if (value == null)
-                return HoverEvent(hoverAction, null)
+                return null
 
-            val hoverValue: Any? = when (hoverAction) {
-                HoverEvent.Action.SHOW_TEXT -> TextComponent(value)
-                HoverEvent.Action.SHOW_ITEM -> parseItemContent(value)
-                HoverEvent.Action.SHOW_ENTITY -> parseEntityContent(value)
-                else -> error("unreachable")
+            return when (hoverAction) {
+                HoverEvent.Action.SHOW_TEXT -> HoverEvent.ShowText(TextComponent(value))
+                HoverEvent.Action.SHOW_ITEM -> HoverEvent.ShowItem(parseItemContent(value).item)
+                HoverEvent.Action.SHOW_ENTITY -> HoverEvent.ShowEntity(parseEntityContent(value))
             }
-
-            @Suppress("UNCHECKED_CAST")
-            return HoverEvent(hoverAction as HoverEvent.Action<Any>, hoverValue)
         }
 
-        private fun parseItemContent(obj: Any): HoverEvent.ItemStackContent {
+            private fun getEventValue(event: HoverEvent): Any {
+                return when (event) {
+                    is HoverEvent.ShowItem -> event.item
+                    is HoverEvent.ShowText -> event.value
+                    is HoverEvent.ShowEntity -> event.entity
+                    else -> error("${event::class} is not of a supported type")
+                }
+            }
+
+            private fun getEventValue(event: ClickEvent): Any {
+                return when (event) {
+                    is ClickEvent.OpenUrl -> event.uri
+                    is ClickEvent.OpenFile -> event.file()
+                    is ClickEvent.RunCommand -> event.command
+                    is ClickEvent.SuggestCommand -> event.command
+                    is ClickEvent.ChangePage -> event.page
+                    is ClickEvent.CopyToClipboard -> event.value
+                    else -> error("${event::class} is not of a supported type")
+                }
+            }
+
+        private fun parseItemContent(obj: Any): HoverEvent.ShowItem {
             return when (obj) {
                 is ItemStack -> obj
                 is Item -> obj.toMC()
                 is CharSequence -> ItemType(obj.toString()).asItem().toMC()
-                is HoverEvent.ItemStackContent -> return obj
+                is HoverEvent.ShowItem -> return obj
                 else -> error("${obj::class} cannot be parsed as an item HoverEvent")
-            }.let(HoverEvent::ItemStackContent)
+            }.let(HoverEvent::ShowItem)
         }
 
         private fun parseEntityContent(obj: Any): HoverEvent.EntityContent? {
             return when (obj) {
                 is MCEntity -> obj
                 is Entity -> obj.toMC()
-                is CharSequence -> return HoverEvent.EntityContent.legacySerializer(TextComponent(obj), null)
-                    .getOrThrow()
                 is HoverEvent.EntityContent -> return obj
                 else -> error("${obj::class} cannot be parsed as an entity HoverEvent")
             }.let { HoverEvent.EntityContent(it.type, it.uuid, it.name) }

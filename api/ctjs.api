@@ -441,19 +441,19 @@ public final class com/chattriggers/ctjs/api/client/Settings$ParticlesMode : jav
 	public static final field DECREASED Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static final field MINIMAL Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static final fun from (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
-	public static final fun fromMC (Lnet/minecraft/client/option/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
+	public static final fun fromMC (Lnet/minecraft/particle/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public synthetic fun getMcValue ()Ljava/lang/Object;
-	public fun getMcValue ()Lnet/minecraft/client/option/ParticlesMode;
+	public fun getMcValue ()Lnet/minecraft/particle/ParticlesMode;
 	public synthetic fun toMC ()Ljava/lang/Object;
-	public fun toMC ()Lnet/minecraft/client/option/ParticlesMode;
+	public fun toMC ()Lnet/minecraft/particle/ParticlesMode;
 	public static fun valueOf (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 	public static fun values ()[Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 }
 
 public final class com/chattriggers/ctjs/api/client/Settings$ParticlesMode$Companion {
 	public final fun from (Ljava/lang/Object;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
-	public final fun fromMC (Lnet/minecraft/client/option/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
+	public final fun fromMC (Lnet/minecraft/particle/ParticlesMode;)Lcom/chattriggers/ctjs/api/client/Settings$ParticlesMode;
 }
 
 public final class com/chattriggers/ctjs/api/client/Settings$SkinWrapper {
@@ -774,15 +774,15 @@ public final class com/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumen
 	public static synthetic fun copy$default (Lcom/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumentWrapper;Lnet/minecraft/command/argument/PosArgument;ILjava/lang/Object;)Lcom/chattriggers/ctjs/api/commands/DynamicCommands$PosArgumentWrapper;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getImpl ()Lnet/minecraft/command/argument/PosArgument;
+	public fun getPos (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec3d;
+	public fun getRotation (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec2f;
 	public fun hashCode ()I
 	public fun isXRelative ()Z
 	public fun isYRelative ()Z
 	public fun isZRelative ()Z
 	public final fun toAbsoluteBlockPos ()Lcom/chattriggers/ctjs/api/world/block/BlockPos;
 	public final fun toAbsolutePos ()Lnet/minecraft/util/math/Vec3d;
-	public fun toAbsolutePos (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec3d;
 	public final fun toAbsoluteRotation ()Lnet/minecraft/util/math/Vec2f;
-	public fun toAbsoluteRotation (Lnet/minecraft/server/command/ServerCommandSource;)Lnet/minecraft/util/math/Vec2f;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1293,25 +1293,25 @@ public final class com/chattriggers/ctjs/api/inventory/nbt/NBTBase$Companion {
 public final class com/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound : com/chattriggers/ctjs/api/inventory/nbt/NBTBase {
 	public fun <init> (Lnet/minecraft/nbt/NbtCompound;)V
 	public final fun get (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTBase;
-	public final fun get (Ljava/lang/String;Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound$NBTDataType;Ljava/lang/Integer;)Ljava/lang/Object;
-	public final fun getBoolean (Ljava/lang/String;)Z
-	public final fun getByte (Ljava/lang/String;)B
-	public final fun getByteArray (Ljava/lang/String;)[B
+	public final fun get (Ljava/lang/String;Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound$NBTDataType;)Ljava/lang/Object;
+	public final fun getBoolean (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getByte (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getByteArray (Ljava/lang/String;)Ljava/util/Optional;
 	public final fun getCompoundTag (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound;
-	public final fun getDouble (Ljava/lang/String;)D
-	public final fun getFloat (Ljava/lang/String;)F
-	public final fun getIntArray (Ljava/lang/String;)[I
-	public final fun getInteger (Ljava/lang/String;)I
+	public final fun getDouble (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getFloat (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getIntArray (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getInteger (Ljava/lang/String;)Ljava/util/Optional;
 	public final fun getKeySet ()Ljava/util/Set;
-	public final fun getLong (Ljava/lang/String;)J
+	public final fun getLong (Ljava/lang/String;)Ljava/util/Optional;
 	public synthetic fun getMcValue ()Ljava/lang/Object;
 	public fun getMcValue ()Lnet/minecraft/nbt/NbtCompound;
 	public synthetic fun getMcValue ()Lnet/minecraft/nbt/NbtElement;
-	public final fun getShort (Ljava/lang/String;)S
-	public final fun getString (Ljava/lang/String;)Ljava/lang/String;
+	public final fun getShort (Ljava/lang/String;)Ljava/util/Optional;
+	public final fun getString (Ljava/lang/String;)Ljava/util/Optional;
 	public final fun getTag (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTBase;
-	public final fun getTagId (Ljava/lang/String;)B
-	public final fun getTagList (Ljava/lang/String;I)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagList;
+	public final fun getTagId (Ljava/lang/String;)Ljava/lang/Byte;
+	public final fun getTagList (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagList;
 	public final fun getTagMap ()Ljava/util/Map;
 	public final fun putLongArray (Ljava/lang/String;[J)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound;
 	public final fun removeTag (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound;
@@ -1357,16 +1357,16 @@ public final class com/chattriggers/ctjs/api/inventory/nbt/NBTTagList : com/chat
 	public final fun get (I)Lnet/minecraft/nbt/NbtElement;
 	public final fun get (IB)Ljava/lang/Object;
 	public final fun getCompoundTagAt (I)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagCompound;
-	public final fun getDoubleAt (I)D
-	public final fun getFloatAt (I)F
+	public final fun getDoubleAt (I)Ljava/util/Optional;
+	public final fun getFloatAt (I)Ljava/util/Optional;
 	public final fun getIntArrayAt (I)[I
-	public final fun getIntAt (I)I
+	public final fun getIntAt (I)Ljava/util/Optional;
 	public final fun getListAt (I)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagList;
 	public final fun getLongArrayAt (I)[J
 	public synthetic fun getMcValue ()Ljava/lang/Object;
 	public synthetic fun getMcValue ()Lnet/minecraft/nbt/NbtElement;
 	public fun getMcValue ()Lnet/minecraft/nbt/NbtList;
-	public final fun getShortAt (I)S
+	public final fun getShortAt (I)Ljava/util/Optional;
 	public final fun getStringTagAt (I)Ljava/lang/String;
 	public final fun getTagCount ()I
 	public final fun insertTag (ILcom/chattriggers/ctjs/api/inventory/nbt/NBTBase;)Lcom/chattriggers/ctjs/api/inventory/nbt/NBTTagList;
@@ -1783,15 +1783,15 @@ public final class com/chattriggers/ctjs/api/render/Renderer$VertexFormat : java
 	public static final field POSITION_TEXTURE_COLOR_LIGHT Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 	public static final field POSITION_TEXTURE_COLOR_NORMAL Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 	public static final field POSITION_TEXTURE_LIGHT_COLOR Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
-	public static final fun fromMC (Lnet/minecraft/client/render/VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
+	public static final fun fromMC (Lcom/mojang/blaze3d/vertex/VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun toMC ()Lnet/minecraft/client/render/VertexFormat;
+	public final fun toMC ()Lcom/mojang/blaze3d/vertex/VertexFormat;
 	public static fun valueOf (Ljava/lang/String;)Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 	public static fun values ()[Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 }
 
 public final class com/chattriggers/ctjs/api/render/Renderer$VertexFormat$Companion {
-	public final fun fromMC (Lnet/minecraft/client/render/VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
+	public final fun fromMC (Lcom/mojang/blaze3d/vertex/VertexFormat;)Lcom/chattriggers/ctjs/api/render/Renderer$VertexFormat;
 }
 
 public final class com/chattriggers/ctjs/api/render/Renderer3d {
@@ -1896,13 +1896,14 @@ public final class com/chattriggers/ctjs/api/render/Text$Align : java/lang/Enum 
 
 public final class com/chattriggers/ctjs/api/render/Toast : net/minecraft/client/toast/Toast {
 	public fun <init> (Lorg/mozilla/javascript/NativeObject;)V
-	public fun draw (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/toast/ToastManager;J)Lnet/minecraft/client/toast/Toast$Visibility;
+	public fun draw (Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/font/TextRenderer;J)V
 	public final fun getBackground ()Ljava/lang/Object;
 	public final fun getDescription ()Ljava/lang/Object;
 	public final fun getDisplayTime ()J
 	public fun getHeight ()I
 	public final fun getIcon ()Ljava/lang/Object;
 	public final fun getTitle ()Ljava/lang/Object;
+	public fun getVisibility ()Lnet/minecraft/client/toast/Toast$Visibility;
 	public fun getWidth ()I
 	public final fun setBackground (Ljava/lang/Object;)V
 	public final fun setDescription (Ljava/lang/Object;)V
@@ -1910,6 +1911,7 @@ public final class com/chattriggers/ctjs/api/render/Toast : net/minecraft/client
 	public final fun setIcon (Ljava/lang/Object;)V
 	public final fun setTitle (Ljava/lang/Object;)V
 	public final fun show ()Lcom/chattriggers/ctjs/api/render/Toast;
+	public fun update (Lnet/minecraft/client/toast/ToastManager;J)V
 }
 
 public class com/chattriggers/ctjs/api/triggers/CancellableEvent {

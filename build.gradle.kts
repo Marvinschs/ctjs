@@ -13,6 +13,7 @@ buildscript {
 }
 
 plugins {
+    idea
     alias(libs.plugins.kotlin)
     alias(libs.plugins.serialization)
     alias(libs.plugins.loom)

@@ -16,14 +16,14 @@ object WorldListener : Initializer {
         }
 
         WorldRenderEvents.START.register { ctx ->
-            val deltaTicks = ctx.tickCounter().getTickDelta(false)
+            val deltaTicks = ctx.tickCounter().dynamicDeltaTicks
             Renderer.withMatrix(ctx.matrixStack(), deltaTicks) {
                 TriggerType.PRE_RENDER_WORLD.triggerAll(deltaTicks)
             }
         }
 
         WorldRenderEvents.LAST.register { ctx ->
-            val deltaTicks = ctx.tickCounter().getTickDelta(false)
+            val deltaTicks = ctx.tickCounter().dynamicDeltaTicks
             Renderer.withMatrix(ctx.matrixStack(), deltaTicks) {
                 TriggerType.POST_RENDER_WORLD.triggerAll(deltaTicks)
             }

@@ -177,10 +177,10 @@ object Renderer {
     }
 
     @JvmStatic
-    fun disableCull() = apply { RenderSystem.disableCull() }
+    fun disableCull() = apply {  }
 
     @JvmStatic
-    fun enableCull() = apply { RenderSystem.enableCull() }
+    fun enableCull() = apply {  }
 
     @JvmStatic
     fun disableLighting() = apply { UGraphics.disableLighting() }
@@ -222,12 +222,12 @@ object Renderer {
     @JvmStatic
     @JvmOverloads
     fun bindTexture(texture: Image, textureIndex: Int = 0) = apply {
-        UGraphics.bindTexture(textureIndex, texture.getTexture()?.glId ?: 0)
+        UGraphics.bindTexture(textureIndex, texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
     fun deleteTexture(texture: Image) = apply {
-        UGraphics.deleteTexture(texture.getTexture()?.glId ?: 0)
+        UGraphics.deleteTexture(texture.getTexture()?.image?.imageId()?.toInt() ?: 0)
     }
 
     @JvmStatic
@@ -580,7 +580,7 @@ object Renderer {
 
         scale(1f, 1f, 50f)
 
-        RenderSystem.setShaderTexture(0, image.getTexture()?.glId ?: 0)
+        RenderSystem.setShaderTexture(0, image.getTexture()?.glTexture)
 
         begin(DrawMode.QUADS, VertexFormat.POSITION_TEXTURE)
         pos(x, y + height, 0f).tex(0f, 1f)
@@ -657,19 +657,19 @@ object Renderer {
         val oldBodyYaw = entity.bodyYaw
         val oldYaw = entity.yaw
         val oldPitch = entity.pitch
-        val oldPrevHeadYaw = entity.prevHeadYaw
+        val oldPrevHeadYaw = entity.lastHeadYaw
         val oldHeadYaw = entity.headYaw
 
         entity.bodyYaw = 180.0f + entityYaw * 20.0f
         entity.yaw = 180.0f + entityYaw * 40.0f
         entity.pitch = -entityPitch * 20.0f
         entity.headYaw = entity.yaw
-        entity.prevHeadYaw = entity.yaw
+        entity.lastHeadYaw = entity.yaw
 
         matrixStack.push()
         matrixStack.translate(0.0, 0.0, 1000.0)
         matrixStack.push()
-        matrixStack.translate(x.toDouble(), y.toDouble(), -950.0)
+        matrixStack.translate(x.toDouble(), y.toDouble(), 50.0)
 
         // UC's version of multiplyPositionMatrix
         matrixStack.peek().model.mul(
@@ -681,7 +681,7 @@ object Renderer {
         )
 
         matrixStack.multiply(flipModelRotation)
-        DiffuseLighting.method_34742()
+        DiffuseLighting.enableGuiShaderLighting()
 
         val entityRenderDispatcher = MinecraftClient.getInstance().entityRenderDispatcher
 
@@ -707,18 +707,22 @@ object Renderer {
             showStingers
         )
 
-        val vec3d = entityRenderer.getPositionOffset(entity, partialTicks)
+        val playerEntityRenderState = entityRenderer.createRenderState().apply {
+            this.baseScale = size.toFloat()
+            this.bodyYaw = entity.bodyYaw
+            this.relativeHeadYaw = entity.yaw
+        }
+
+        val vec3d = entityRenderer.getPositionOffset(playerEntityRenderState)
         val d = vec3d.getX()
         val e = vec3d.getY()
         val f = vec3d.getZ()
         matrixStack.push()
         matrixStack.translate(d, e, f)
-        RenderSystem.runAsFancy {
-            entityRenderer.render(entity, 0.0f, 1.0f, matrixStack.toMC(), vertexConsumers, light)
-            if (entity.doesRenderOnFire()) {
-                entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
-                    .invokeRenderFire(matrixStack.toMC(), vertexConsumers, entity, Quaternionf())
-            }
+        entityRenderer.render(playerEntityRenderState, matrixStack.toMC(), vertexConsumers, light)
+        if (entity.doesRenderOnFire()) {
+            entityRenderDispatcher.asMixin<EntityRenderDispatcherAccessor>()
+                .invokeRenderFire(matrixStack.toMC(), vertexConsumers, playerEntityRenderState, Quaternionf())
         }
 
         matrixStack.pop()
@@ -732,7 +736,7 @@ object Renderer {
         entity.bodyYaw = oldBodyYaw
         entity.yaw = oldYaw
         entity.pitch = oldPitch
-        entity.prevHeadYaw = oldPrevHeadYaw
+        entity.lastHeadYaw = oldPrevHeadYaw
         entity.headYaw = oldHeadYaw
 
         matrixStack.pop()
@@ -776,7 +780,7 @@ object Renderer {
     }
 
     enum class VertexFormat(private val mcValue: MCVertexFormat) {
-        LINES(VertexFormats.LINES),
+        LINES(VertexFormats.POSITION_COLOR_NORMAL),
         POSITION(VertexFormats.POSITION),
         POSITION_COLOR(VertexFormats.POSITION_COLOR),
         POSITION_TEXTURE(VertexFormats.POSITION_TEXTURE),

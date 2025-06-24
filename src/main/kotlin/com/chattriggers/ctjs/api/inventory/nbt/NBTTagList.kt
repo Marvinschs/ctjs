@@ -37,15 +37,15 @@ class NBTTagList(override val mcValue: MCNbtList) : NBTBase(mcValue) {
 
     fun getDoubleAt(index: Int) = mcValue.getDouble(index)
 
-    fun getStringTagAt(index: Int): String = mcValue.getString(index)
+    fun getStringTagAt(index: Int): String = mcValue.getString(index).get()
 
-    fun getListAt(index: Int) = NBTTagList(mcValue.getList(index))
+    fun getListAt(index: Int) = NBTTagList(mcValue.getList(index).get())
 
-    fun getCompoundTagAt(index: Int) = NBTTagCompound(mcValue.getCompound(index))
+    fun getCompoundTagAt(index: Int) = NBTTagCompound(mcValue.getCompound(index).get())
 
-    fun getIntArrayAt(index: Int): IntArray = mcValue.getIntArray(index)
+    fun getIntArrayAt(index: Int): IntArray = mcValue.getIntArray(index).get()
 
-    fun getLongArrayAt(index: Int): LongArray = mcValue.getLongArray(index)
+    fun getLongArrayAt(index: Int): LongArray = mcValue.getLongArray(index).get()
 
     operator fun get(index: Int): NbtElement = mcValue[index]
 

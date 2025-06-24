@@ -7,6 +7,7 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer
 import net.minecraft.client.render.entity.feature.*
 import net.minecraft.client.render.entity.model.ArmorEntityModel
 import net.minecraft.client.render.entity.model.EntityModelLayers
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.text.Text
 
@@ -77,22 +78,21 @@ internal class CTPlayerRenderer(
         reset()
     }
 
-    override fun hasLabel(livingEntity: AbstractClientPlayerEntity?) = showNametag
-
     override fun renderLabelIfPresent(
-        abstractClientPlayerEntity: AbstractClientPlayerEntity?,
+        playerEntityRenderState: PlayerEntityRenderState?,
         text: Text?,
         matrixStack: MatrixStack?,
         vertexConsumerProvider: VertexConsumerProvider?,
-        i: Int,
-        f: Float
-    ) {
+        i: Int
+    ){
         if (showNametag)
-            super.renderLabelIfPresent(abstractClientPlayerEntity, text, matrixStack, vertexConsumerProvider, i, f)
+            super.renderLabelIfPresent(playerEntityRenderState, text, matrixStack, vertexConsumerProvider, i)
     }
 
     private fun reset() {
         features.clear()
+
+        val entityModels = ctx.modelManager.entityModelsSupplier.get()
 
         if (showArmor) {
             addFeature(
@@ -100,25 +100,25 @@ internal class CTPlayerRenderer(
                     this,
                     ArmorEntityModel(ctx.getPart(if (slim) EntityModelLayers.PLAYER_SLIM_INNER_ARMOR else EntityModelLayers.PLAYER_INNER_ARMOR)),
                     ArmorEntityModel(ctx.getPart(if (slim) EntityModelLayers.PLAYER_SLIM_OUTER_ARMOR else EntityModelLayers.PLAYER_OUTER_ARMOR)),
-                    ctx.modelManager
+                    ctx.equipmentRenderer
                 )
             )
         }
         if (showHeldItem)
-            addFeature(PlayerHeldItemFeatureRenderer(this, ctx.heldItemRenderer))
+            addFeature(PlayerHeldItemFeatureRenderer(this))
         if (showArrows)
-            addFeature(StuckArrowsFeatureRenderer(ctx, this))
-        addFeature(Deadmau5FeatureRenderer(this))
+            addFeature(StuckArrowsFeatureRenderer(this, ctx))
+        addFeature(Deadmau5FeatureRenderer(this, entityModels))
         if (showCape)
-            addFeature(CapeFeatureRenderer(this))
+            addFeature(CapeFeatureRenderer(this, entityModels, ctx.equipmentModelLoader))
         if (showArmor)
-            addFeature(HeadFeatureRenderer(this, ctx.modelLoader, ctx.heldItemRenderer))
+            addFeature(HeadFeatureRenderer(this, entityModels))
         if (showElytra)
-            addFeature(ElytraFeatureRenderer(this, ctx.modelLoader))
+            addFeature(ElytraFeatureRenderer(this, entityModels, ctx.equipmentRenderer))
         if (showParrot)
-            addFeature(ShoulderParrotFeatureRenderer(this, ctx.modelLoader))
-        addFeature(TridentRiptideFeatureRenderer(this, ctx.modelLoader))
+            addFeature(ShoulderParrotFeatureRenderer(this, entityModels))
+        addFeature(TridentRiptideFeatureRenderer(this, entityModels))
         if (showStingers)
-            addFeature(StuckStingersFeatureRenderer(this))
+            addFeature(StuckStingersFeatureRenderer(this, ctx))
     }
 }

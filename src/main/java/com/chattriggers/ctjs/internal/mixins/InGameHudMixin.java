@@ -29,6 +29,6 @@ public class InGameHudMixin {
         )
     )
     private void injectRenderOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        CTEvents.RENDER_OVERLAY.invoker().render(context.getMatrices(), tickCounter.getTickDelta(false));
+        CTEvents.RENDER_OVERLAY.invoker().render(context.getMatrices(), tickCounter.getDynamicDeltaTicks());
     }
 }

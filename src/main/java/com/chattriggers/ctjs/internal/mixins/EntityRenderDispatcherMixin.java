@@ -21,10 +21,8 @@ public abstract class EntityRenderDispatcherMixin {
         Renderer.initializePlayerRenderers$ctjs(context);
     }
 
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void injectRender(Entity entity, double x, double y, double z, float yaw, float tickDelta,
-                              MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light,
-                              CallbackInfo ci) {
-        CTEvents.RENDER_ENTITY.invoker().render(matrices, entity, tickDelta, ci);
+    @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At("HEAD"), cancellable = true)
+    private void injectRender(Entity entity, double x, double y, double z, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo ci) {
+        CTEvents.RENDER_ENTITY.invoker().render(matrices, entity, tickProgress, ci);
     }
 }

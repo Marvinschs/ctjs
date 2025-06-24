@@ -16,7 +16,7 @@ import net.minecraft.client.sound.Sound.RegistrationType
 import net.minecraft.client.sound.WeightedSoundSet
 import net.minecraft.resource.*
 import net.minecraft.resource.metadata.ResourceMetadata
-import net.minecraft.resource.metadata.ResourceMetadataReader
+import net.minecraft.resource.metadata.ResourceMetadataSerializer
 import net.minecraft.sound.SoundCategory
 import net.minecraft.sound.SoundEvent
 import net.minecraft.util.Identifier
@@ -524,7 +524,7 @@ class Sound(private val config: NativeObject) {
             throw UnsupportedOperationException()
         }
 
-        override fun <T : Any?> parseMetadata(metaReader: ResourceMetadataReader<T>?): T? {
+        override fun <T : Any?> parseMetadata(metaReader: ResourceMetadataSerializer<T>?): T? {
             throw UnsupportedOperationException()
         }
 

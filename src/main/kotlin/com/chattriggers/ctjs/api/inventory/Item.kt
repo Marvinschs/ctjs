@@ -4,7 +4,6 @@ import com.chattriggers.ctjs.api.CTWrapper
 import com.chattriggers.ctjs.api.client.Client
 import com.chattriggers.ctjs.api.client.Player
 import com.chattriggers.ctjs.api.entity.Entity
-import com.chattriggers.ctjs.api.inventory.nbt.NBTTagCompound
 import com.chattriggers.ctjs.api.message.TextComponent
 import com.chattriggers.ctjs.api.render.Renderer
 import com.chattriggers.ctjs.api.world.World
@@ -12,15 +11,15 @@ import com.chattriggers.ctjs.api.world.block.Block
 import com.chattriggers.ctjs.api.world.block.BlockPos
 import com.chattriggers.ctjs.internal.Skippable
 import com.chattriggers.ctjs.internal.TooltipOverridable
-import com.chattriggers.ctjs.MCNbtCompound
 import com.chattriggers.ctjs.internal.utils.asMixin
 import net.minecraft.block.pattern.CachedBlockPosition
 import net.minecraft.client.render.DiffuseLighting
 import net.minecraft.client.render.OverlayTexture
-import net.minecraft.client.render.model.json.ModelTransformationMode
+import net.minecraft.client.render.item.ItemRenderState
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.enchantment.EnchantmentHelper
 import net.minecraft.item.Item.TooltipContext
+import net.minecraft.item.ItemDisplayContext
 import net.minecraft.item.ItemStack
 import net.minecraft.item.tooltip.TooltipType
 import net.minecraft.util.crash.CrashException
@@ -121,6 +120,7 @@ class Item(override val mcValue: ItemStack) : CTWrapper<ItemStack> {
     @JvmOverloads
     fun draw(x: Float = 0f, y: Float = 0f, scale: Float = 1f, z: Float = 200f) {
         val itemRenderer = Client.getMinecraft().itemRenderer
+        val itemRenderState = ItemRenderState()
 
         Renderer.pushMatrix()
             .scale(scale, scale, 1f)
@@ -130,29 +130,23 @@ class Item(override val mcValue: ItemStack) : CTWrapper<ItemStack> {
         // to here, so its drawItem method has been copy-pasted here instead
         if (mcValue.isEmpty)
             return
-        val bakedModel = itemRenderer.getModel(mcValue, World.toMC(), null, 0)
+        Client.getMinecraft().itemModelManager.clearAndUpdate(itemRenderState, mcValue, ItemDisplayContext.GUI, World.toMC(), null, 0)
         Renderer.pushMatrix()
-        Renderer.translate(x + 8, y + 8, (150f + if (bakedModel.hasDepth()) z else 0f))
+        Renderer.translate(x + 8, y + 8, 150 + z)
         try {
-            Renderer.scale(1.0f, -1.0f, 1.0f)
-            Renderer.scale(16.0f, 16.0f, 16.0f)
-            if (!bakedModel.isSideLit)
-                DiffuseLighting.disableGuiDepthLighting()
             val vertexConsumers = Client.getMinecraft().bufferBuilders.entityVertexConsumers
-            itemRenderer.renderItem(
-                mcValue,
-                ModelTransformationMode.GUI,
-                false,
-                Renderer.matrixStack.toMC(),
-                vertexConsumers,
-                0xF000F0,
-                OverlayTexture.DEFAULT_UV,
-                bakedModel,
-            )
+
+            Renderer.scale(16.0f, -16.0f, 16.0f)
+            if (!itemRenderState.isSideLit)
+                vertexConsumers.draw()
+            DiffuseLighting.disableGuiDepthLighting()
+
+            itemRenderState.render(Renderer.matrixStack.toMC(), vertexConsumers, 15728880, OverlayTexture.DEFAULT_UV)
+
             Renderer.disableDepth()
             vertexConsumers.draw()
             Renderer.enableDepth()
-            if (!bakedModel.isSideLit) {
+            if (!itemRenderState.isSideLit) {
                 DiffuseLighting.enableGuiDepthLighting()
             }
         } catch (e: Throwable) {

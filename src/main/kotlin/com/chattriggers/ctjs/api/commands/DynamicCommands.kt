@@ -24,6 +24,7 @@ import com.chattriggers.ctjs.internal.mixins.commands.EntitySelectorAccessor
 import com.chattriggers.ctjs.MCEntity
 import com.chattriggers.ctjs.MCNbtCompound
 import com.chattriggers.ctjs.api.client.Client
+import com.chattriggers.ctjs.api.message.ChatLib
 import com.chattriggers.ctjs.internal.utils.asMixin
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.ImmutableStringReader
@@ -43,7 +44,9 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.registry.BuiltinRegistries
 import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.CommandOutput
 import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.text.Text
 import net.minecraft.util.math.Box
 import net.minecraft.util.math.Vec2f
 import net.minecraft.util.math.Vec3d
@@ -668,7 +671,14 @@ object DynamicCommands : CommandCollection() {
 
     private fun getMockCommandSource(): ServerCommandSource {
         return ServerCommandSource(
-            Player.toMC(),
+            object : CommandOutput {
+                override fun sendMessage(message: Text?) {
+                    ChatLib.chat(message)
+                }
+                override fun shouldReceiveFeedback() = true
+                override fun shouldTrackOutput() = false
+                override fun shouldBroadcastConsoleToOps() = false
+            },
             Player.getPos().toVec3d(),
             Player.getRotation(),
             null,
@@ -703,11 +713,11 @@ object DynamicCommands : CommandCollection() {
     }
 
     data class PosArgumentWrapper(val impl: PosArgument) : PosArgument by impl {
-        fun toAbsolutePos(): Vec3d = impl.toAbsolutePos(getMockCommandSource())
+        fun toAbsolutePos(): Vec3d = impl.getPos(getMockCommandSource())
 
         fun toAbsoluteBlockPos(): BlockPos = BlockPos(impl.toAbsoluteBlockPos(getMockCommandSource()))
 
-        fun toAbsoluteRotation(): Vec2f = impl.toAbsoluteRotation(getMockCommandSource())
+        fun toAbsoluteRotation(): Vec2f = impl.getRotation(getMockCommandSource())
 
         override fun toString() = "PosArgument"
     }

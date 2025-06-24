@@ -42,43 +42,43 @@ object Settings {
         fun isCapeEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.CAPE)
 
         fun setCapeEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.CAPE, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.CAPE, toggled)
         }
 
         fun isJacketEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.JACKET)
 
         fun setJacketEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.JACKET, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.JACKET, toggled)
         }
 
         fun isLeftSleeveEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.LEFT_SLEEVE)
 
         fun setLeftSleeveEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.LEFT_SLEEVE, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.LEFT_SLEEVE, toggled)
         }
 
         fun isRightSleeveEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.RIGHT_SLEEVE)
 
         fun setRightSleeveEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.RIGHT_SLEEVE, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.RIGHT_SLEEVE, toggled)
         }
 
         fun isLeftPantsLegEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.LEFT_PANTS_LEG)
 
         fun setLeftPantsLegEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.LEFT_PANTS_LEG, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.LEFT_PANTS_LEG, toggled)
         }
 
         fun isRightPantsLegEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.RIGHT_PANTS_LEG)
 
         fun setRightPantsLegEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.RIGHT_PANTS_LEG, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.RIGHT_PANTS_LEG, toggled)
         }
 
         fun isHatEnabled() = toMC().isPlayerModelPartEnabled(PlayerModelPart.HAT)
 
         fun setHatEnabled(toggled: Boolean) {
-            toMC().togglePlayerModelPart(PlayerModelPart.HAT, toggled)
+            toMC().setPlayerModelPart(PlayerModelPart.HAT, toggled)
         }
     }
 

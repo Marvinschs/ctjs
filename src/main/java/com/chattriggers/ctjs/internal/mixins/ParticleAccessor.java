@@ -73,22 +73,22 @@ public interface ParticleAccessor {
     void setAge(int value);
 
     @Accessor
-    double getPrevPosX();
+    double getLastX();
 
     @Accessor
-    void setPrevPosX(double value);
+    void setLastX(double value);
 
     @Accessor
-    double getPrevPosY();
+    double getLastY();
 
     @Accessor
-    void setPrevPosY(double value);
+    void setLastY(double value);
 
     @Accessor
-    double getPrevPosZ();
+    double getLastZ();
 
     @Accessor
-    void setPrevPosZ(double value);
+    void setLastZ(double value);
 
     @Accessor
     boolean getDead();

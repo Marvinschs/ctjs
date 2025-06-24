@@ -11,6 +11,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.HttpURLConnection
 import java.nio.ByteBuffer
+import java.util.UUID
 import javax.imageio.ImageIO
 
 class Image(var image: BufferedImage?) {
@@ -140,7 +141,7 @@ class Image(var image: BufferedImage?) {
                 val buffer = MemoryUtil.memAlloc(it.size())
                 buffer.put(it.toByteArray())
                 buffer.rewind()
-                Texture(NativeImageBackedTexture(NativeImage.read(buffer)), buffer)
+                Texture(NativeImageBackedTexture({"ct:${UUID.randomUUID()}"}, NativeImage.read(buffer)), buffer)
             }
         }
     }

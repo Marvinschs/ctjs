@@ -181,12 +181,9 @@ internal object CTCommand : Initializer {
         for (i in 0 until toDump) {
             val msg = ChatLib.replaceFormatting(messages[messages.size - toDump + i].formattedText)
             TextComponent(Text.literal(msg).styled {
-                it.withClickEvent(ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, msg))
+                it.withClickEvent(ClickEvent.CopyToClipboard(msg))
                     .withHoverEvent(
-                        HoverEvent(
-                            HoverEvent.Action.SHOW_TEXT,
-                            TextComponent("&eClick here to copy this message.")
-                        )
+                        HoverEvent.ShowText(TextComponent("&eClick here to copy this message."))
                     )
             })
                 .withChatLineId(idFixed + i + 1)

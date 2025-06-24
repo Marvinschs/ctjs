@@ -197,7 +197,7 @@ open class Entity(override val mcValue: MCEntity) : CTWrapper<MCEntity> {
 
     fun isInWater() = mcValue.isTouchingWater
 
-    fun isWet() = mcValue.isWet
+    fun isWet() = mcValue.isTouchingWaterOrRain
 
     fun getDimension() = mcValue.world.dimensionEntry.key.let { key ->
         DimensionType.entries.first { it.toMC() == key }

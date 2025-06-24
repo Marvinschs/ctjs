@@ -14,9 +14,9 @@ class Particle(override val mcValue: MCParticle) : CTWrapper<MCParticle> {
     var y by mixed::y
     var z by mixed::z
 
-    var lastX by mixed::prevPosX
-    var lastY by mixed::prevPosY
-    var lastZ by mixed::prevPosZ
+    var lastX by mixed::lastX
+    var lastY by mixed::lastY
+    var lastZ by mixed::lastZ
 
     val renderX get() = lastX + (x - lastX) * Renderer.partialTicks
     val renderY get() = lastY + (y - lastY) * Renderer.partialTicks

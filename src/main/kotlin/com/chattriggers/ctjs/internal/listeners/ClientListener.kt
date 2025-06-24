@@ -27,7 +27,6 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenKeyboardEvents
 import net.fabricmc.fabric.api.event.player.*
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
-import net.minecraft.util.TypedActionResult
 import org.lwjgl.glfw.GLFW
 import org.mozilla.javascript.Context
 
@@ -203,7 +202,7 @@ object ClientListener : Initializer {
         }
 
         UseItemCallback.EVENT.register { player, _, hand ->
-            if (!player.world.isClient) return@register TypedActionResult.pass(null)
+            if (!player.world.isClient) return@register ActionResult.PASS
             val event = CancellableEvent()
 
             val stack = player.getStackInHand(hand)
@@ -214,7 +213,7 @@ object ClientListener : Initializer {
                 event,
             )
 
-            if (event.isCancelled()) TypedActionResult.fail(null) else TypedActionResult.pass(null)
+            if (event.isCancelled()) ActionResult.FAIL else ActionResult.PASS
         }
     }
 

@@ -15,10 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerScreenHandler.class)
-public class PlayerScreenHandlerMixin {
+public abstract class PlayerScreenHandlerMixin {
     @Shadow
-    @Final
-    private RecipeInputInventory craftingInput;
+    public abstract RecipeInputInventory getCraftingInput();
 
     @Inject(
             method = "onClosed",
@@ -32,6 +31,7 @@ public class PlayerScreenHandlerMixin {
         // dropping items for player's crafting slots. needs a whole injection point due to there
         // being an extra if to make sure it only calls dropInventory server-side
         if (player.getWorld().isClient) {
+            var craftingInput = this.getCraftingInput();
             for (int i = 0; i < craftingInput.size(); i++) {
                 ItemStack stack = craftingInput.getStack(i);
                 if (!stack.isEmpty()) {

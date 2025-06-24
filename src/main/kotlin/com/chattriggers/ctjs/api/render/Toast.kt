@@ -7,7 +7,9 @@ import com.chattriggers.ctjs.internal.engine.JSLoader
 import com.chattriggers.ctjs.internal.utils.getOrNull
 import com.chattriggers.ctjs.internal.utils.toIdentifier
 import com.mojang.blaze3d.systems.RenderSystem
+import net.minecraft.client.font.TextRenderer
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.RenderLayer
 import net.minecraft.client.toast.ToastManager
 import net.minecraft.util.Identifier
 import org.mozilla.javascript.*
@@ -73,6 +75,9 @@ class Toast(config: NativeObject) : Toast {
         Context.javaToJS(this, Context.getContext().topCallScope) as Scriptable
     } else null
 
+    private var startTime: Long? = null
+    private var visibility: Toast.Visibility = Toast.Visibility.HIDE
+
     init {
         title = config.getOrNull("title")
         description = config.getOrNull("description")
@@ -84,10 +89,23 @@ class Toast(config: NativeObject) : Toast {
     override fun getHeight() = toastHeight
 
     fun show() = apply {
+        startTime = null
         Client.getMinecraft().toastManager.add(this)
     }
 
-    override fun draw(context: DrawContext, manager: ToastManager, startTime: Long): Toast.Visibility {
+    override fun getVisibility(): Toast.Visibility? = visibility
+
+    override fun update(manager: ToastManager?, time: Long) {
+        if (startTime == null) {
+            startTime = time
+        }
+
+        val duration = displayTime * (manager?.notificationDisplayTimeMultiplier ?: 1.0)
+        val elapsed = time - startTime!!
+        visibility = if (elapsed < duration) Toast.Visibility.SHOW else Toast.Visibility.HIDE
+    }
+
+    override fun draw(context: DrawContext, textRenderer: TextRenderer?, startTime: Long) {
         if (customRenderFunction != null) {
             Renderer.withMatrix(context.matrices) {
                 try {
@@ -102,13 +120,13 @@ class Toast(config: NativeObject) : Toast {
         } else {
             backgroundBacker?.let {
                 RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-                context.drawTexture(it, 0, 0, 0.0f, 0.0f, width, height, width, height)
+                context.drawGuiTexture(RenderLayer::getGuiTextured, it, 0, 0, width, height)
             }
 
-            iconBacker?.let {
+            iconBacker?.let { it: Identifier ->
                 RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
                 val iconSize = height - ICON_PADDING * 2
-                context.drawTexture(it, ICON_PADDING, ICON_PADDING, 0.0f, 0.0f, iconSize, iconSize, iconSize, iconSize)
+                context.drawGuiTexture(RenderLayer::getGuiTextured, it, ICON_PADDING,ICON_PADDING, iconSize,iconSize)
             }
 
             val textX = if (icon == null) ICON_PADDING else height
@@ -124,8 +142,6 @@ class Toast(config: NativeObject) : Toast {
                 context.drawText(textRenderer, it, textX, textY, 0xffffff, false)
             }
         }
-
-        return if (startTime > displayTime) Toast.Visibility.HIDE else Toast.Visibility.SHOW
     }
 
     private companion object {

@@ -35,7 +35,7 @@ class NBTTagCompound(override val mcValue: MCNbtCompound) : NBTBase(mcValue) {
 
     fun getTag(key: String): NBTBase? = mcValue.get(key)?.let(::fromMC)
 
-    fun getTagId(key: String) = mcValue.getType(key)
+    fun getTagId(key: String) = mcValue.get(key)?.type
 
     fun getByte(key: String) = mcValue.getByte(key)
 
@@ -57,11 +57,11 @@ class NBTTagCompound(override val mcValue: MCNbtCompound) : NBTBase(mcValue) {
 
     fun getBoolean(key: String) = mcValue.getBoolean(key)
 
-    fun getCompoundTag(key: String) = NBTTagCompound(mcValue.getCompound(key))
+    fun getCompoundTag(key: String) = NBTTagCompound(mcValue.getCompound(key).get())
 
-    fun getTagList(key: String, type: Int) = NBTTagList(mcValue.getList(key, type))
+    fun getTagList(key: String) = NBTTagList(mcValue.getList(key).get())
 
-    fun get(key: String, type: NBTDataType, tagType: Int?): Any? {
+    fun get(key: String, type: NBTDataType): Any? {
         return when (type) {
             NBTDataType.BYTE -> getByte(key)
             NBTDataType.SHORT -> getShort(key)
@@ -70,32 +70,28 @@ class NBTTagCompound(override val mcValue: MCNbtCompound) : NBTBase(mcValue) {
             NBTDataType.FLOAT -> getFloat(key)
             NBTDataType.DOUBLE -> getDouble(key)
             NBTDataType.STRING -> {
-                if (mcValue.contains(key, NbtElement.STRING_TYPE.toInt()))
+                if (mcValue.contains(key))
                     tagMap[key]?.let { NBTBase(it).toString() }
                 else null
             }
             NBTDataType.BYTE_ARRAY -> {
-                if (mcValue.contains(key, NbtElement.BYTE_TYPE.toInt()))
+                if (mcValue.contains(key))
                     (tagMap[key] as NbtByteArray).byteArray
                 else null
             }
             NBTDataType.INT_ARRAY -> {
-                if (mcValue.contains(key, NbtElement.INT_ARRAY_TYPE.toInt()))
+                if (mcValue.contains(key))
                     (tagMap[key] as NbtIntArray).intArray
                 else null
             }
             NBTDataType.LONG_ARRAY -> {
-                if (mcValue.contains(key, NbtElement.LONG_ARRAY_TYPE.toInt()))
+                if (mcValue.contains(key))
                     (tagMap[key] as NbtLongArray).longArray
                 else null
             }
             NBTDataType.BOOLEAN -> getBoolean(key)
             NBTDataType.COMPOUND_TAG -> getCompoundTag(key)
-            NBTDataType.TAG_LIST -> getTagList(
-                key,
-                tagType
-                    ?: throw IllegalArgumentException("For accessing a tag list you need to provide the tagType argument")
-            )
+            NBTDataType.TAG_LIST -> getTagList(key)
         }
     }
 

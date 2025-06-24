@@ -52,7 +52,7 @@ class Chunk(override val mcValue: MCChunk) : CTWrapper<MCChunk> {
     fun getAllEntitiesOfType(clazz: Class<MCEntity>): List<Entity> {
         val box = Box(
             MCBlockPos(getMinBlockX(), mcValue.bottomY, getMinBlockZ())
-        ).stretch(16.0, mcValue.topY.toDouble(), 16.0)
+        ).stretch(16.0, mcValue.topYInclusive.toDouble(), 16.0)
 
         return World.toMC()?.getEntitiesByClass(clazz, box) { true }?.map(Entity::fromMC) ?: listOf()
     }

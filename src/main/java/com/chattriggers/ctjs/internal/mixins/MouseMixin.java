@@ -2,6 +2,7 @@ package com.chattriggers.ctjs.internal.mixins;
 
 import com.chattriggers.ctjs.internal.engine.CTEvents;
 import com.chattriggers.ctjs.internal.listeners.MouseListener;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.gui.screen.Screen;
 import org.objectweb.asm.Opcodes;
@@ -41,14 +42,14 @@ public class MouseMixin {
     }
 
     @Inject(
-        method = "method_55795(Lnet/minecraft/client/gui/screen/Screen;DDDD)V",
+        method = "tick",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/gui/screen/Screen;mouseDragged(DDIDD)Z"
         ),
         cancellable = true
     )
-    private void injectOnGuiMouseDrag(Screen screen, double d, double e, double f, double g, CallbackInfo ci) {
+    private void injectOnGuiMouseDrag(CallbackInfo ci, @Local(ordinal = 0) double d, @Local(ordinal = 1) double e, @Local Screen screen, @Local(ordinal = 2) double f, @Local(ordinal = 3) double g) {
         if (screen != null) {
             CTEvents.GUI_MOUSE_DRAG.invoker().process(f, g, d, e, activeButton, screen, ci);
         }
